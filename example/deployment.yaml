@@ -1,0 +1,84 @@
+########################################################
+# k8s-namespace-guard Deployment
+########################################################
+# k8s-namespace-guard  need to be TLS enabled, Please create a cert/key pair and upload to k8s secret
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: k8s-namespace-guard
+  name: k8s-namespace-guard
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-namespace-guard
+  revisionHistoryLimit: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8s-namespace-guard
+    spec:
+      serviceAccountName: k8s-namespace-guard
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: k8s-namespace-guard
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+            cpu: 500m
+        image: "k8s-namespace-guard"
+        args:
+        - --admitAll=false
+        - --keyFile=/etc/ssl/certs/k8s-namespace-guard/server-key.pem
+        - --certFile=/etc/ssl/certs/k8s-namespace-guard/server.crt
+        - --clientAuth=false
+        - --logFile=/var/log/k8s-namespace-guard.log
+        - --logLevel=info
+        - --port=443
+        command:
+        - /usr/bin/k8s-namespace-guard
+        ports:
+          - containerPort: 443
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        livenessProbe:
+          httpGet:
+            path: /status.html
+            port: 443
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+        readinessProbe:
+          httpGet:
+            path: /status.html
+            port: 443
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          timeoutSeconds: 2
+        volumeMounts:
+        - name: tls
+          mountPath: "/etc/ssl/certs/k8s-namespace-guard"
+          readOnly: true
+      volumes:
+      - name: tls
+        secret:
+          defaultMode: 420
+          items:
+          - key: tls.key
+            path: server-key.pem
+          - key: tls.crt
+            path: server.crt
+          secretName: k8s-namespace-guard-tls-certs
