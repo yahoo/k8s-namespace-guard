@@ -1,4 +1,5 @@
-//Copyright 2017 Yahoo! Holdings Inc. Licensed under the terms of the 3-Clause BSD License.
+// Copyright 2017 Yahoo Holdings Inc. 
+// Licensed under the terms of the 3-Clause BSD License.
 package main
 
 import (

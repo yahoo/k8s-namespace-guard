@@ -1,4 +1,3 @@
-# Copyright 2017 Yahoo! Holdings Inc. Licensed under the terms of the 3-Clause BSD License.
 # k8s-namespace-guard
 
 k8s-namespace-guard provides an admission control policy that safeguards against accidental deletion of cluster namespaces.
@@ -45,3 +44,5 @@ USAGE:
   --logLevel     string  The log level. (default "info")
   --port         string  Server port. (default "443")
 ```
+
+Copyright 2017 Yahoo! Holdings Inc. Licensed under the terms of the 3-Clause BSD License.
