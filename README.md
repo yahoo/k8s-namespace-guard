@@ -45,4 +45,4 @@ USAGE:
   --port         string  Server port. (default "443")
 ```
 
-Copyright 2017 Yahoo! Holdings Inc. Licensed under the terms of the 3-Clause BSD License.
+Copyright 2017 Yahoo Holdings Inc. Licensed under the terms of the 3-Clause BSD License.
